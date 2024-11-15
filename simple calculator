@@ -1,0 +1,44 @@
+#include <stdio.h>
+int main()
+{
+    char operator; 
+    double a;
+    double b;
+    double result;
+
+    printf("\nEnter an operator:(+ - * /) ");
+    scanf("%c", &operator);
+
+    printf("\nenter your first number: ");
+    scanf("%lf", &a);
+
+    printf("\nEnter your second number: ");
+    scanf("%lf", &b);
+
+    // switch: we use it wen we dont want to use else if so many times
+    switch (operator)
+    {
+    case '+':
+        result = a + b;
+        printf("%.2lf", result);
+        break;
+
+    case '-':
+        result = a - b;
+        printf("%.2lf", result);
+        break;
+
+    case '*':
+        result = a * b;
+        printf("%.2lf", result);
+        break;
+
+    case '/':
+        result = a / b;
+        printf("%.2lf", result);
+        break;
+        
+    default: printf("invalid operator");
+        break;
+    }
+}
