@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//stds: students
-
 #define MAX_STD 100
 #define MAX_COURSE 20
 
@@ -11,7 +9,6 @@ struct student_course
     char course_name[255];
     int couse_value;
     float grade;
-    int all_courses_values;
 };
 
 struct date
@@ -31,6 +28,7 @@ struct student_info
     struct date dob; 
     struct student_course courses[MAX_COURSE];
     int number_of_added_course;
+    int all_courses_values;
 };
 
 void read_from_file(struct student_info stds[], int *count_student)
@@ -52,7 +50,7 @@ void read_from_file(struct student_info stds[], int *count_student)
                 fscanf(file, "%s\t%d\t%f\n", stds[*count_student].courses[i].course_name, 
                 &stds[*count_student].courses[i].couse_value, &stds[*count_student].courses[i].grade);
             }
-            fscanf(file, "%d\n", &stds[*count_student].courses->all_courses_values);
+            fscanf(file, "%d\n", &stds[*count_student].all_courses_values);
             (*count_student)++;
         }
     }
@@ -83,7 +81,7 @@ void update_file(struct student_info stds[], int* count_student)
                 fprintf(file, "%s\t%d\t%f\n", stds[i].courses[j].course_name, 
                 stds[i].courses[j].couse_value, stds[i].courses[j].grade);
             }
-            fprintf(file, "%d\n\n", stds[i].courses->all_courses_values);
+            fprintf(file, "%d\n\n", stds[i].all_courses_values);
         }
     }
     else
@@ -138,11 +136,11 @@ char *course_name, int course_value, int* count_student)
     for (int i = 0; i < *count_student; i++)
     {
         
-        if(stds[i].courses->all_courses_values + course_value <= MAX_COURSE)
+        if(stds[i].all_courses_values + course_value <= MAX_COURSE)
         {
             strcpy(stds[i].courses[stds[i].number_of_added_course].course_name, course_name);
             stds[i].courses[stds[i].number_of_added_course].couse_value = course_value;
-            stds[i].courses->all_courses_values = stds[i].courses->all_courses_values + course_value;
+            stds[i].all_courses_values = stds[i].all_courses_values + course_value;
             stds[i].number_of_added_course++;
             printf("\n****The course was added to student number %d****\n", i+1);
         }
@@ -156,20 +154,20 @@ char *course_name, int course_value, int* count_student)
 void add_course_to_one_person(struct student_info stds[], struct student_course courses[], 
 char *course_name, int course_value, int searched_id_to_add_course)
 {   
-    if(stds[searched_id_to_add_course].courses->all_courses_values + course_value <= MAX_COURSE)
+    if(stds[searched_id_to_add_course].all_courses_values + course_value <= MAX_COURSE)
     {
         strcpy(stds[searched_id_to_add_course].courses[stds[searched_id_to_add_course].number_of_added_course].course_name, course_name);
         stds[searched_id_to_add_course].courses[stds[searched_id_to_add_course].number_of_added_course].couse_value = course_value;
-        stds[searched_id_to_add_course].courses->all_courses_values = stds[searched_id_to_add_course].courses->all_courses_values + course_value;
+        stds[searched_id_to_add_course].all_courses_values = stds[searched_id_to_add_course].all_courses_values + course_value;
         stds[searched_id_to_add_course].number_of_added_course++;
         printf("\n****The course was added****\n");
     }
     else
     {
-        int course_value_after_adding = stds[searched_id_to_add_course].courses->all_courses_values + course_value;
+        int course_value_after_adding = stds[searched_id_to_add_course].all_courses_values + course_value;
         printf("\n****sorry, not enough space to add more courses :(****\n");
         printf("****current courses values: %d\tcourses values if you add this course:%d\tlimit is 20****\n", 
-        stds[searched_id_to_add_course].courses->all_courses_values, course_value_after_adding);
+        stds[searched_id_to_add_course].all_courses_values, course_value_after_adding);
     }
 }
 
@@ -179,7 +177,7 @@ void remove_course (struct student_info stds[], struct student_course courses[],
     {
         stds[searched_id_to_remove_course].courses[i] = stds[searched_id_to_remove_course].courses[i+1];
     }
-    stds[searched_id_to_remove_course].courses->all_courses_values = stds[searched_id_to_remove_course].courses->all_courses_values - stds[searched_id_to_remove_course].courses[sellected_course_to_remove-1].couse_value;
+    stds[searched_id_to_remove_course].all_courses_values = stds[searched_id_to_remove_course].all_courses_values - stds[searched_id_to_remove_course].courses[sellected_course_to_remove-1].couse_value;
     stds[searched_id_to_remove_course].number_of_added_course--;
 }
 
