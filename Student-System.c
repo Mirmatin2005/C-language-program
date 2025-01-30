@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+//stds: students
+
 #define MAX_STD 100
 #define MAX_COURSE 20
 
@@ -107,9 +109,9 @@ void add_student(struct student_info stds[], struct student_info newstd, int* co
     }
 }
 
-void remove_student(struct student_info stds[], struct date dob, int* count_student, int n)
+void remove_student(struct student_info stds[], int* count_student, int searched_id_to_remove_student)
 {
-    for (int i = n-1; i < *count_student; i++)
+    for (int i = searched_id_to_remove_student; i < *count_student; i++)
     {
         stds[i] = stds[i+1];
         for(int q=0; q<stds[i+1].number_of_added_course; q++)
@@ -120,66 +122,65 @@ void remove_student(struct student_info stds[], struct date dob, int* count_stud
     (*count_student)--;
 }
 
-void edit_student(struct student_info stds[], int m, char *new_first_name, 
+void edit_student(struct student_info stds[], int searched_id_to_edit_student, char *new_first_name, 
 char *new_last_name, int new_student_number, char *new_gender, char *new_father_name)
 {
-    strcpy(stds[m-1].first_name, new_first_name);
-    strcpy(stds[m-1].last_name, new_last_name);
-    strcpy(stds[m-1].gender, new_gender);
-    strcpy(stds[m-1].father_name, new_father_name);
-    stds[m-1].studentـnumber = new_student_number;
+    strcpy(stds[searched_id_to_edit_student].first_name, new_first_name);
+    strcpy(stds[searched_id_to_edit_student].last_name, new_last_name);
+    strcpy(stds[searched_id_to_edit_student].gender, new_gender);
+    strcpy(stds[searched_id_to_edit_student].father_name, new_father_name);
+    stds[searched_id_to_edit_student].studentـnumber = new_student_number;
 }
 
 void add_course_to_all(struct student_info stds[], struct student_course courses[], 
 char *course_name, int course_value, int* count_student)
 {
-    for (int l = 0; l < *count_student; l++)
+    for (int i = 0; i < *count_student; i++)
     {
-        stds[l].courses->all_courses_values = stds[l].courses->all_courses_values + course_value;
-        if(stds[l].courses->all_courses_values <= MAX_COURSE)
+        
+        if(stds[i].courses->all_courses_values + course_value <= MAX_COURSE)
         {
-            strcpy(stds[l].courses[stds[l].number_of_added_course].course_name, course_name);
-            stds[l].courses[stds[l].number_of_added_course].couse_value = course_value;
-            stds[l].number_of_added_course++;
-            printf("\n****The course was added to student number %d****\n", l+1);
+            strcpy(stds[i].courses[stds[i].number_of_added_course].course_name, course_name);
+            stds[i].courses[stds[i].number_of_added_course].couse_value = course_value;
+            stds[i].courses->all_courses_values = stds[i].courses->all_courses_values + course_value;
+            stds[i].number_of_added_course++;
+            printf("\n****The course was added to student number %d****\n", i+1);
         }
         else
         {
-            stds[l].courses->all_courses_values = stds[l].courses->all_courses_values - course_value;
-            printf("\n****sorry, the course was not added to student number %d because of course value limit :(****\n", l+1);
+            printf("\n****sorry, the course was not added to student number %d because of course value limit :(****\n", i+1);
         }
     }
 }
 
 void add_course_to_one_person(struct student_info stds[], struct student_course courses[], 
-char *course_name, int course_value, int k)
-{
-    stds[k-1].courses->all_courses_values = stds[k-1].courses->all_courses_values + course_value; 
-    if(stds[k-1].courses->all_courses_values <= MAX_COURSE)
+char *course_name, int course_value, int searched_id_to_add_course)
+{   
+    if(stds[searched_id_to_add_course].courses->all_courses_values + course_value <= MAX_COURSE)
     {
-        strcpy(stds[k-1].courses[stds[k-1].number_of_added_course].course_name, course_name);
-        stds[k-1].courses[stds[k-1].number_of_added_course].couse_value = course_value;
-        stds[k-1].number_of_added_course++;
+        strcpy(stds[searched_id_to_add_course].courses[stds[searched_id_to_add_course].number_of_added_course].course_name, course_name);
+        stds[searched_id_to_add_course].courses[stds[searched_id_to_add_course].number_of_added_course].couse_value = course_value;
+        stds[searched_id_to_add_course].courses->all_courses_values = stds[searched_id_to_add_course].courses->all_courses_values + course_value;
+        stds[searched_id_to_add_course].number_of_added_course++;
         printf("\n****The course was added****\n");
     }
     else
     {
-        int course_value_before_adding = stds[k-1].courses->all_courses_values - course_value;
-        stds[k-1].courses->all_courses_values = stds[k-1].courses->all_courses_values - course_value;
+        int course_value_after_adding = stds[searched_id_to_add_course].courses->all_courses_values + course_value;
         printf("\n****sorry, not enough space to add more courses :(****\n");
-        printf("****current courses values: %d\tcourses values if you add this course:%d\tlimit is 20****\n", course_value_before_adding, 
-        stds[k-1].courses->all_courses_values);
+        printf("****current courses values: %d\tcourses values if you add this course:%d\tlimit is 20****\n", 
+        stds[searched_id_to_add_course].courses->all_courses_values, course_value_after_adding);
     }
 }
 
-void remove_course (struct student_info stds[], struct student_course courses[], int b, int o)
+void remove_course (struct student_info stds[], struct student_course courses[], int sellected_course_to_remove, int searched_id_to_remove_course)
 {
-    for (int i = b-1; i < stds[o-1].number_of_added_course; i++)
+    for (int i = sellected_course_to_remove-1; i < stds[searched_id_to_remove_course].number_of_added_course; i++)
     {
-        stds[o-1].courses[i] = stds[o-1].courses[i+1];
+        stds[searched_id_to_remove_course].courses[i] = stds[searched_id_to_remove_course].courses[i+1];
     }
-    stds[o-1].courses->all_courses_values = stds[o-1].courses->all_courses_values - stds[o-1].courses[b-1].couse_value;
-    stds[o-1].number_of_added_course--;
+    stds[searched_id_to_remove_course].courses->all_courses_values = stds[searched_id_to_remove_course].courses->all_courses_values - stds[searched_id_to_remove_course].courses[sellected_course_to_remove-1].couse_value;
+    stds[searched_id_to_remove_course].number_of_added_course--;
 }
 
 void print_student(struct student_info stds[], struct date dob, 
@@ -247,8 +248,11 @@ void main()
             scanf("%s", newstd.first_name);
             printf("Last name: ");
             scanf("%s", newstd.last_name);
-            printf("What is your gender:(male or female?) ");
-            scanf("%s", newstd.gender);
+            do
+            {
+                printf("What is your gender:(male or female?) ");
+                scanf("%s", newstd.gender);
+            } while (strcmp(newstd.gender, "male")!=0 && strcmp(newstd.gender, "female")!=0);
             printf("Father name: ");
             scanf("%s", newstd.father_name);
             printf("Student number: ");
@@ -259,7 +263,7 @@ void main()
             break;
         
         case 2:
-            int n;
+            int searched_id_to_remove_student;
             long long int student_number_for_remove_student;
             int search_result1 = 0;
             printf("Enter student number: ");
@@ -268,7 +272,7 @@ void main()
             {
                 if(student_number_for_remove_student == stds[i].studentـnumber)
                 {
-                    n = i+1;
+                    searched_id_to_remove_student = i;
                     search_result1 = 1;
                     break;
                 }
@@ -279,20 +283,20 @@ void main()
             }
             else
             {
-                printf("\nStudent %d:\n", n);
-                printf("\tFirst name: %s\n", stds[n-1].first_name);
-                printf("\tLast name: %s\n", stds[n-1].last_name);
-                printf("\tStudent number: %lld\n", stds[n-1].studentـnumber);
-                printf("\tGender: %s\n", stds[n-1].gender);
-                printf("\tFather name: %s\n", stds[n-1].father_name);
-                printf("\tDate of birth: %02d/%02d/%02d\n\n", stds[n-1].dob.day, 
-                stds[n-1].dob.month, stds[n-1].dob.year);
+                printf("\nStudent %d:\n", searched_id_to_remove_student+1);
+                printf("\tFirst name: %s\n", stds[searched_id_to_remove_student].first_name);
+                printf("\tLast name: %s\n", stds[searched_id_to_remove_student].last_name);
+                printf("\tStudent number: %lld\n", stds[searched_id_to_remove_student].studentـnumber);
+                printf("\tGender: %s\n", stds[searched_id_to_remove_student].gender);
+                printf("\tFather name: %s\n", stds[searched_id_to_remove_student].father_name);
+                printf("\tDate of birth: %02d/%02d/%02d\n\n", stds[searched_id_to_remove_student].dob.day, 
+                stds[searched_id_to_remove_student].dob.month, stds[searched_id_to_remove_student].dob.year);
                 int make_sure;
                 printf("Are you sure that you want to remove this student?(Yes: 1/No: 2) ");
                 scanf("%d", &make_sure);
                 if(make_sure == 1)
                 {
-                    remove_student(stds, dob, &count_student, n);
+                    remove_student(stds, &count_student, searched_id_to_remove_student);
                     update_file(stds, &count_student);
                     printf("\n****The student was removed****\n");
                 }
@@ -304,7 +308,7 @@ void main()
             break;
 
         case 3:
-            int m;
+            int searched_id_to_edit_student;
             long long int student_number_for_edit_student;
             int search_result2 = 0;
             printf("Enter student number: ");
@@ -313,7 +317,7 @@ void main()
             {
                 if(student_number_for_edit_student == stds[i].studentـnumber)
                 {
-                    m = i+1;
+                    searched_id_to_edit_student = i;
                     search_result2 = 1;
                     break;
                 }
@@ -335,14 +339,17 @@ void main()
                 scanf("%s", new_last_name);
                 printf("Student number: ");
                 scanf("%lld", &new_student_number);
-                printf("Gender(male or female): ");
-                scanf("%s", new_gender);
+                do
+                {
+                    printf("What is your gender:(male or female?) ");
+                    scanf("%s", new_gender);
+                } while (strcmp(new_gender, "male")!=0 && strcmp(new_gender, "female")!=0);
                 printf("Father name: ");
                 scanf("%s", new_father_name);
                 printf("Date of birth (DD/MM/YYYY): ");
-                scanf("%d/%d/%d", &stds[m-1].dob.day, &stds[m-1].dob.month, 
-                &stds[m-1].dob.year);
-                edit_student(stds, m, new_first_name, new_last_name, 
+                scanf("%d/%d/%d", &stds[searched_id_to_edit_student].dob.day, &stds[searched_id_to_edit_student].dob.month, 
+                &stds[searched_id_to_edit_student].dob.year);
+                edit_student(stds, searched_id_to_edit_student, new_first_name, new_last_name, 
                 new_student_number, new_gender, new_father_name);
                 update_file(stds, &count_student);
                 printf("\n****The student was edited****\n");
@@ -350,35 +357,13 @@ void main()
             break;
         
         case 4:
-            int k;
+            int searched_id_to_add_course;
             char course_name[255];
             int course_value;
             long long int student_number_for_add_course;
             int search_result3 = 0;
             printf("Enter student number (0 to add all): ");
             scanf("%lld", &student_number_for_add_course);
-            for (int i = 0; i < count_student; i++)
-            {
-                if(student_number_for_add_course == stds[i].studentـnumber)
-                {
-                    k = i+1;
-                    search_result3 = 1;
-                    break;
-                }
-            }
-            if(search_result3 == 0)
-            {
-                printf("\n****The student dose not exist****\n");
-            }
-            else
-            {
-                printf("Enter course name: ");
-                scanf("%s", course_name);
-                printf("Enter course value: ");
-                scanf("%d", &course_value);
-                add_course_to_one_person(stds, courses, course_name, course_value, k);
-                update_file(stds, &count_student);
-            }
             if (student_number_for_add_course == 0)
             {
                 printf("Enter course name: ");
@@ -388,10 +373,35 @@ void main()
                 add_course_to_all(stds, courses, course_name, course_value, &count_student);
                 update_file(stds, &count_student);
             }
+            else
+            {
+                for (int i = 0; i < count_student; i++)
+                {
+                    if(student_number_for_add_course == stds[i].studentـnumber)
+                    {
+                        searched_id_to_add_course = i;
+                        search_result3 = 1;
+                        break;
+                    }
+                }
+                if(search_result3 == 0)
+                {
+                    printf("\n****The student dose not exist****\n");
+                }
+                else
+                {
+                    printf("Enter course name: ");
+                    scanf("%s", course_name);
+                    printf("Enter course value: ");
+                    scanf("%d", &course_value);
+                    add_course_to_one_person(stds, courses, course_name, course_value, searched_id_to_add_course);
+                    update_file(stds, &count_student);
+                }
+            }
             break;
         
         case 5:
-            int o;
+            int searched_id_to_remove_course;
             long long int student_number_for_remove_course;
             int search_result4 = 0;
             printf("Enter student number: ");
@@ -400,7 +410,7 @@ void main()
             {
                 if(student_number_for_remove_course == stds[i].studentـnumber)
                 {
-                    o = i+1;
+                    searched_id_to_remove_course = i;
                     search_result4 = 1;
                     break;
                 }
@@ -411,25 +421,25 @@ void main()
             }
             else
             {
-                for (int i = 0; i < stds[o-1].number_of_added_course; i++)
+                for (int i = 0; i < stds[searched_id_to_remove_course].number_of_added_course; i++)
                 {
-                    if(stds[o-1].courses[i].grade != 0)
+                    if(stds[searched_id_to_remove_course].courses[i].grade != 0)
                     {
-                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[o-1].courses[i].course_name, 
-                        stds[o-1].courses[i].couse_value, stds[o-1].courses[i].grade);
+                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[searched_id_to_remove_course].courses[i].course_name, 
+                        stds[searched_id_to_remove_course].courses[i].couse_value, stds[searched_id_to_remove_course].courses[i].grade);
                     }
                     else
                     {
-                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[o-1].courses[i].course_name, 
-                        stds[o-1].courses[i].couse_value);          
+                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[searched_id_to_remove_course].courses[i].course_name, 
+                        stds[searched_id_to_remove_course].courses[i].couse_value);          
                     }
                 }
-                int b;
+                int sellected_course_to_remove;
                 printf("\nWhich course do you want to remove? ");
-                scanf("%d", &b);
-                if (b>=1 && b<=stds[o-1].number_of_added_course)
+                scanf("%d", &sellected_course_to_remove);
+                if (sellected_course_to_remove>=1 && sellected_course_to_remove<=stds[searched_id_to_remove_course].number_of_added_course)
                 {
-                    remove_course(stds, courses, b, o);
+                    remove_course(stds, courses, sellected_course_to_remove, searched_id_to_remove_course);
                     update_file(stds, &count_student);
                     printf("\n****The course was removed****\n");
                 }
@@ -441,7 +451,7 @@ void main()
             break;
 
         case 6:
-            int h;
+            int sellected_student_to_add_course_grade;
             long long int student_number_for_add_course_grade;
             int search_result5 = 0;
             printf("Enter student number: ");
@@ -450,7 +460,7 @@ void main()
             {
                 if(student_number_for_add_course_grade == stds[i].studentـnumber)
                 {
-                    h = i+1;
+                    sellected_student_to_add_course_grade = i;
                     search_result5 = 1;
                     break;
                 }
@@ -461,25 +471,25 @@ void main()
             }
             else
             {
-                for (int i = 0; i < stds[h-1].number_of_added_course; i++)
+                for (int i = 0; i < stds[sellected_student_to_add_course_grade].number_of_added_course; i++)
                 {
-                    if(stds[h-1].courses[i].grade != 0)
+                    if(stds[sellected_student_to_add_course_grade].courses[i].grade != 0)
                     {
-                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[h-1].courses[i].course_name, 
-                        stds[h-1].courses[i].couse_value, stds[h-1].courses[i].grade);
+                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[sellected_student_to_add_course_grade].courses[i].course_name, 
+                        stds[sellected_student_to_add_course_grade].courses[i].couse_value, stds[sellected_student_to_add_course_grade].courses[i].grade);
                     }
                     else
                     {
-                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[h-1].courses[i].course_name, 
-                        stds[h-1].courses[i].couse_value);          
+                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[sellected_student_to_add_course_grade].courses[i].course_name, 
+                        stds[sellected_student_to_add_course_grade].courses[i].couse_value);          
                     }
                 }
-                int g;
+                int sellected_course_to_add_grade;
                 printf("\nChose the course: ");
-                scanf("%d", &g);
-                if (g>=1 && g<=stds[h-1].number_of_added_course)
+                scanf("%d", &sellected_course_to_add_grade);
+                if (sellected_course_to_add_grade>=1 && sellected_course_to_add_grade<=stds[sellected_student_to_add_course_grade].number_of_added_course)
                 {
-                    if(stds[h-1].courses[g-1].grade != 0)
+                    if(stds[sellected_student_to_add_course_grade].courses[sellected_course_to_add_grade].grade != 0)
                     {
                         printf("\n****This course is already graded****\n");
                     }
@@ -488,7 +498,7 @@ void main()
                         float grade;
                         printf("Grade: ");
                         scanf("%f", &grade);
-                        stds[h-1].courses[g-1].grade = grade;
+                        stds[sellected_student_to_add_course_grade].courses[sellected_course_to_add_grade].grade = grade;
                         update_file(stds, &count_student);
                         printf("\n****The course graded successfuly****\n");
                     }
@@ -501,7 +511,7 @@ void main()
             break;
         
         case 7:
-            int z;
+            int sellected_student_to_edit_course_grade;
             long long int student_number_for_edit_course_grade;
             int search_result6 = 0;
             printf("Enter student number: ");
@@ -510,7 +520,7 @@ void main()
             {
                 if(student_number_for_edit_course_grade == stds[i].studentـnumber)
                 {
-                    z = i+1;
+                    sellected_student_to_edit_course_grade = i;
                     search_result6 = 1;
                     break;
                 }
@@ -521,25 +531,25 @@ void main()
             }
             else
             {
-                for (int i = 0; i < stds[z-1].number_of_added_course; i++)
+                for (int i = 0; i < stds[sellected_student_to_edit_course_grade].number_of_added_course; i++)
                 {
-                    if(stds[z-1].courses[i].grade != 0)
+                    if(stds[sellected_student_to_edit_course_grade].courses[i].grade != 0)
                     {
-                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[z-1].courses[i].course_name, 
-                        stds[z-1].courses[i].couse_value, stds[z-1].courses[i].grade);
+                        printf("%d. course name: %s\tcourse value: %d\tgrade: %.2f\n", i+1, stds[sellected_student_to_edit_course_grade].courses[i].course_name, 
+                        stds[sellected_student_to_edit_course_grade].courses[i].couse_value, stds[sellected_student_to_edit_course_grade].courses[i].grade);
                     }
                     else
                     {
-                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[z-1].courses[i].course_name, 
-                        stds[z-1].courses[i].couse_value);          
+                        printf("%d. course name: %s\tcourse value: %d\n", i+1, stds[sellected_student_to_edit_course_grade].courses[i].course_name, 
+                        stds[sellected_student_to_edit_course_grade].courses[i].couse_value);          
                     }
                 }
-                int x;
+                int sellected_course_to_edit_grade;
                 printf("\nChose the course: ");
-                scanf("%d", &x);
-                if (x>=1 && x<=stds[z-1].number_of_added_course)
+                scanf("%d", &sellected_course_to_edit_grade);
+                if (sellected_course_to_edit_grade>=1 && sellected_course_to_edit_grade<=stds[sellected_student_to_edit_course_grade].number_of_added_course)
                 {
-                    if(stds[z-1].courses[x-1].grade == 0)
+                    if(stds[sellected_student_to_edit_course_grade].courses[sellected_course_to_edit_grade-1].grade == 0)
                     {
                         printf("\n****This course has no grade to edit****\n");
                     }
@@ -548,7 +558,7 @@ void main()
                         float new_grade;
                         printf("Grade: ");
                         scanf("%f", &new_grade);
-                        stds[z-1].courses[x-1].grade = new_grade;
+                        stds[sellected_student_to_edit_course_grade].courses[sellected_course_to_edit_grade-1].grade = new_grade;
                         update_file(stds, &count_student);
                         printf("\n****The course grade edited successfuly****\n");
                     }
